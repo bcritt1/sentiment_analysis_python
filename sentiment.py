@@ -2,6 +2,7 @@
 # in huggingface. would be ideal to do list of lists so sentences are grouped by work
 # Import packages
 import os
+import sys
 import re
 import ssl
 from transformers import pipeline
@@ -24,11 +25,13 @@ nltk.download('punkt')
 user = os.getenv('USER')
 #corpusdir = '/Users/bcritt/Documents/StanfordProjects/Corpora/Emerson/emerson/'
 #corpusdir = '/farmshare/learning/data/emerson/'.format(user)
-corpusdir = '/home/users/{}/corpora/test_corpus/'.format(user)
+#corpusdir = '/home/users/{}/corpora/test_corpus/'.format(user)
+corpusdir = '/scratch/users/{}/corpus/'.format(user)
 corpus = []
-for infile in os.listdir(corpusdir):
-    with open(corpusdir+infile, errors='ignore') as fin:
-        corpus.append(fin.read())
+x = os.listdir(corpusdir)
+infile = x[int(sys.argv[1])]
+with open(corpusdir+infile, errors='ignore') as fin:
+    corpus.append(fin.read())
 
 # convert corpus to string instead of list
 sorpus = str(corpus)
@@ -59,7 +62,8 @@ model = pipe(sentences, max_length = 512, padding="max_length", truncation=True)
 print(model)
 print(len(model))
 df = pd.DataFrame(model)
-df.to_csv("/scratch/users/{}/outputs/foo.csv".format(user))
+filename = "/scratch/users/{}/outputs/sentiment/".format(user)+infile+".csv"
+df.to_csv(filename)
 
 #GENRE CLASSIFIER
 #can be combined as
